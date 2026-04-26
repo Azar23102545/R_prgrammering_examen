@@ -28,7 +28,3 @@ install.packages("here")
 ```r
 source("run_analysis.R")
 ```
-
-Skriptet kör varje steg (01 → 02 → 03 → 04) i rätt ordning, skriver ut
-tabeller och resultat i konsolen och sparar figurerna som PNG-filer i
-projektets rotmapp.
