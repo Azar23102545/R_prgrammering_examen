@@ -165,5 +165,5 @@ Vad gjorde jag bra?
 Jag är nöjd med hur jag delade upp analysen i separata R-filer, det gjorde det lättare att hålla ordning och hitta fel. Jag la till också ner tid på att förstå varför datastädningen spelar roll, inte bara köra koden utan att faktiskt tänka på vad som händer med datan.
 
 Vad var svårast?
-Det svåraste var hanteringen av saknade värden, jag var osäker på om median-imputation verkligen var rätt val eller om jag borde ha gjort något annat. Det tog också tid att förstå hur kategoriska variabler fungerar i regression, alltså att varje nivå jämförs mot en referensnivå som inte syns direkt i outputen
+Det svåraste var hanteringen av saknade värden, jag var osäker på om median-imputation verkligen var rätt val eller om jag borde ha gjort något annat. Det tog också tid att förstå hur kategoriska variabler fungerar i regression, alltså att varje nivå jämförs mot en referensnivå som inte syns direkt i outputen.
 
