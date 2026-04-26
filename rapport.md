@@ -1,0 +1,182 @@
+# Rapport – Analys av försäkringskostnader
+
+
+## 1. Syfte
+
+Syftet med analysen är att undersöka vilka faktorer som hänger ihop med
+kundernas försäkringskostnader (`charges`), och att bygga en regressionsmodell
+som kan användas som stöd vid framtida prissättning.
+
+Frågeställningarna är:
+
+1. Hur är försäkringskostnaderna fördelade?
+2. Vilka variabler verkar ha starkast samband med kostnaden?
+3. Hur väl kan en linjär regressionsmodell förklara kostnaden?
+
+
+## 2. Metod
+
+### 2.1 Data
+
+Datasetet innehåller **1 100 kunder** och **14 variabler**: demografiska
+uppgifter (ålder, kön, region), livsstil (BMI, motion, rökning, antal barn),
+hälsa (kronisk sjukdom, hälsokontroller), försäkringshistorik (tidigare
+olyckor, tidigare claims, försäkringsplan) och målvariabeln `charges`.
+
+### 2.2 Dataförståelse
+
+Datasetet har några saknade värden och inkonsekvenser som behöver hanteras
+innan analysen:
+
+- `bmi`: 28 saknade värden
+- `exercise_level`: 22 saknade värden
+- `annual_checkups`: 20 saknade värden
+- `region`: blandade stavningar (t.ex. "North", "south ")
+- `smoker`: blandade stavningar (t.ex. "Yes", "no ")
+- `plan_type`: blandade stavningar (t.ex. "Premium", "basic ")
+
+### 2.3 Datastädning
+
+Alla textvärden trimmades och konverterades till små bokstäver. Saknade
+värden för `bmi` och `annual_checkups` ersattes med medianen (robust mot
+extremvärden), och saknade värden för `exercise_level` ersattes med den
+vanligaste kategorin ("medium"). Kategoriska variabler konverterades till
+faktorer i rätt ordning.
+
+### 2.4 Nya variabler
+
+Tre nya variabler skapades för att göra analysen tydligare:
+
+- **`bmi_category`** – standardkategorisering (Underweight/Normal/Overweight/
+  Obese) enligt WHO. Gör det lättare att se mönster i grupper än i råa värden.
+- **`age_group`** – tre naturliga åldersgrupper (Young/Middle/Senior) för
+  gruppjämförelser.
+- **`risk_score`** – summan av `prior_accidents` och `prior_claims` som ett
+  kombinerat historiskt riskmått.
+
+### 2.5 Modell
+
+Två linjära regressionsmodeller byggdes med `charges` som målvariabel:
+
+- **Modell 1** (enkel): `charges ~ age + bmi + smoker`
+- **Modell 2** (utökad): alla relevanta prediktorer
+
+Modellerna jämförs med justerat R², residualens standardfel (RSE), AIC och
+ett ANOVA-test.
+
+---
+
+## 3. Resultat
+
+### 3.1 Beskrivande analys
+
+Kostnaderna är **högerskeva**: de flesta kunder betalar mellan ca 5 000 och
+12 000 kr, men en mindre grupp betalar mycket mer (max ca 32 600 kr). Medel
+ligger på ca 10 060 kr och median på ca 9 124 kr.
+
+Tydliga skillnader mellan grupper:
+
+| Grupp | Medelkostnad (kr) |
+|---|---|
+| Rökare | ca 16 500 |
+| Icke-rökare | ca 8 600 |
+| Kronisk sjukdom (ja) | ca 13 600 |
+| Kronisk sjukdom (nej) | ca 8 900 |
+| Låg motionsnivå | ca 11 600 |
+| Hög motionsnivå | ca 8 600 |
+
+Rökning och kronisk sjukdom sticker ut som tydliga drivare av högre kostnad.
+Figurerna (fig1–fig4) bekräftar dessa mönster visuellt.
+
+### 3.2 Regressionsanalys
+
+| Modell | Justerat R² | RSE | AIC |
+|---|---|---|---|
+| Modell 1 (enkel) | 0,54 | 3 094 | högre |
+| Modell 2 (utökad) | **0,74** | **2 313** | lägre |
+
+Modell 2 är signifikant bättre (ANOVA, p < 0,001) och väljs som huvudmodell.
+
+**Viktigaste koefficienterna i modell 2** (p < 0,05):
+
+| Variabel | Effekt på charges (kr) |
+|---|---|
+| Rökare (ja) | **+7 400** |
+| Kronisk sjukdom (ja) | +3 800 |
+| Premiumplan (vs basic) | +1 500 |
+| Låg motion (vs hög) | +1 500 |
+| Tidigare olycka (per st) | +1 050 |
+| Tidigare claim (per st) | +900 |
+| Standardplan (vs basic) | +690 |
+| BMI (per enhet) | +160 |
+| Ålder (per år) | +70 |
+
+Variabler som inte var signifikanta: `sex`, `region`, `children`,
+`annual_checkups`.
+
+---
+
+## 4. Slutsatser
+
+Analysen visar att **rökning** är i särklass den starkaste drivaren av
+försäkringskostnader – rökare betalar i snitt ca 7 400 kr mer än icke-rökare,
+allt annat lika. Därefter kommer **kronisk sjukdom**, **försäkringsplan**
+och **motionsnivå**. BMI och ålder har mindre men fortfarande signifikanta
+effekter.
+
+Modellen förklarar **ca 74 %** av variationen i kostnaderna, vilket är en
+bra nivå för en enkel linjär modell och tyder på att prissättningen i stort
+följer rimliga mönster.
+
+### 4.1 Modellens begränsningar
+
+- Modellen är **linjär** och fångar inte eventuella samspelseffekter,
+  t.ex. att rökning kan ha större effekt på äldre personer än yngre.
+- Kostnaderna är **högerskeva**, vilket kan bryta mot antagandet om
+  normalfördelade residualer. En logaritmering av `charges` kan ge bättre
+  modellanpassning.
+- Modellen är tränad på historisk data och **förutsätter att mönstren
+  kvarstår** över tid.
+- **Cirka 26 %** av variationen förklaras inte av modellen, vilket betyder
+  att det finns faktorer (t.ex. diagnoser, familjebakgrund, livshändelser)
+  som saknas i datasetet.
+
+### 4.2 Möjliga förbättringar
+
+- Testa `log(charges)` som målvariabel för att hantera skevheten.
+- Lägga till samspelstermer, t.ex. `age:smoker` eller `bmi:smoker`.
+- Testa en icke-linjär modell (exempelvis regressionsträd eller
+  random forest) för jämförelse.
+- Samla in fler variabler, t.ex. yrke eller utbildning.
+
+---
+
+## 5. Självreflektion
+
+**Vad gjorde jag bra?**
+Jag tycker att jag strukturerade koden på ett tydligt sätt, delade upp
+analysen i logiska steg (dataförståelse, städning, beskrivande analys,
+regression) och motiverade mina val längs vägen. Jag lade också tid på att
+städa kategoriska variabler noggrant och att skapa nya variabler som faktiskt
+hjälper tolkningen.
+
+**Vad var svårast?**
+Det svåraste var att bestämma hur jag skulle hantera de saknade värdena på
+ett rimligt sätt och hur jag skulle tolka regressionskoefficienterna för
+kategoriska variabler (dvs. förstå att varje nivå jämförs mot referensnivån).
+
+**Vilket betyg tycker jag att min inlämning motsvarar?**
+Jag tycker att min inlämning uppfyller kraven för **Godkänd (G)**:
+
+- Jag har genomfört en relevant analys av datasetet i R.
+- Jag har beskrivit och förberett datat på ett rimligt sätt (hanterat
+  saknade värden, städat kategoriska variabler, konverterat datatyper).
+- Jag har skapat statistiska sammanfattningar och fyra relevanta
+  visualiseringar, var och en med en tolkning.
+- Jag har motiverat och skapat tre nya variabler (`bmi_category`,
+  `age_group`, `risk_score`).
+- Jag har byggt två regressionsmodeller med `charges` som målvariabel och
+  tolkat resultaten på en rimlig nivå.
+- Jag har dragit relevanta slutsatser och diskuterat modellens begränsningar.
+- Koden är tydligt organiserad och går att köra från början till slut via
+  `run_analysis.R`.
