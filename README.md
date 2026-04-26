@@ -22,7 +22,7 @@ install.packages("here")
 
 ## Så här kör du analysen
 
-1. Öppna mappen `insurance-analysis/` i RStudio
+1. Öppna mappen `insurance_analysis_Azar_Mohseni/` i RStudio
 2. Kör kommandot nedan i terminalen:
 
 ```r
