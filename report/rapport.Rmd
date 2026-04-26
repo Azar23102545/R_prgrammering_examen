@@ -161,15 +161,9 @@ följer rimliga mönster.
 
 ## 5. Självreflektion
 
-**Vad gjorde jag bra?**
-Jag tycker att jag strukturerade koden på ett tydligt sätt, delade upp
-analysen i logiska steg (dataförståelse, städning, beskrivande analys,
-regression) och motiverade mina val längs vägen. Jag lade också tid på att
-städa kategoriska variabler noggrant och att skapa nya variabler som faktiskt
-hjälper tolkningen.
+Vad gjorde jag bra?
+Jag är nöjd med hur jag delade upp analysen i separata R-filer, det gjorde det lättare att hålla ordning och hitta fel. Jag la till också ner tid på att förstå varför datastädningen spelar roll, inte bara köra koden utan att faktiskt tänka på vad som händer med datan.
 
-**Vad var svårast?**
-Det svåraste var att bestämma hur jag skulle hantera de saknade värdena på
-ett rimligt sätt och hur jag skulle tolka regressionskoefficienterna för
-kategoriska variabler.
+Vad var svårast?
+Det svåraste var hanteringen av saknade värden, jag var osäker på om median-imputation verkligen var rätt val eller om jag borde ha gjort något annat. Det tog också tid att förstå hur kategoriska variabler fungerar i regression, alltså att varje nivå jämförs mot en referensnivå som inte syns direkt i outputen
 
